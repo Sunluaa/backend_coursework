@@ -52,6 +52,9 @@
                                     </form>
                                     <a class="btn btn-sm btn-outline-secondary" href="{% url 'surveys:take_survey' survey.uuid %}">Ссылка</a>
                                 {% endif %}
+                                {% if survey.status == "closed" %}
+                                    <a class="btn btn-sm btn-outline-danger" href="{% url 'surveys:survey_delete' survey.id %}">Удалить</a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Max, Q
 from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -56,14 +56,6 @@ def _sync_question_choices(question: Question, choice_texts: list[str]) -> None:
         Choice.objects.bulk_create(
             [Choice(question=question, text=text, order=index + 1) for index, text in enumerate(cleaned_texts)]
         )
-
-
-def _renumber_questions(survey: Survey, start: int = 1) -> None:
-    questions = list(survey.questions.order_by("order", "id"))
-    for order, question in enumerate(questions, start=start):
-        question.order = order
-    if questions:
-        Question.objects.bulk_update(questions, ["order"])
 
 
 def _question_form_context(form: QuestionForm, question: Question | None = None, choice_texts: list[str] | None = None):
@@ -184,10 +176,10 @@ def question_create(request, survey_id):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    _renumber_questions(survey, start=2)
+                    next_order = (survey.questions.aggregate(max_order=Max("order"))["max_order"] or 0) + 1
                     question = form.save(commit=False)
                     question.survey = survey
-                    question.order = 1
+                    question.order = next_order
                     question.save()
                     _sync_question_choices(question, choice_texts)
                 messages.success(request, "Вопрос добавлен.")

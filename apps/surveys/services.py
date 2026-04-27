@@ -223,15 +223,17 @@ def calculate_survey_results(survey: Survey) -> dict[str, Any]:
             item["choice_total"] = choice_total
             if question.question_type == Question.Type.MULTIPLE_CHOICE:
                 item["choice_total_label"] = "Всего выборов"
-                item["percentage_title"] = "Доля выборов"
+                item["percentage_title"] = "Доля прохождений"
+                percentage_base = response_count
             else:
                 item["choice_total_label"] = "Ответов на вопрос"
                 item["percentage_title"] = "Доля ответов"
+                percentage_base = choice_total
 
             item["choices"] = [
                 {
                     **choice,
-                    "percentage": _percentage(choice["count"], choice_total),
+                    "percentage": _percentage(choice["count"], percentage_base),
                 }
                 for choice in raw_choices
             ]
