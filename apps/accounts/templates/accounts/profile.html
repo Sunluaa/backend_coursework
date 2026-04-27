@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Личный кабинет</h1>
+        <p class="text-muted mb-0">Пользователь: {{ user.username }}</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'surveys:dashboard' %}">Панель опросов</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Логин</dt>
+            <dd class="col-sm-9">{{ user.username }}</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">{{ user.email|default:"Не указан" }}</dd>
+            <dt class="col-sm-3">Дата регистрации</dt>
+            <dd class="col-sm-9">{{ user.date_joined|date:"d.m.Y H:i" }}</dd>
+        </dl>
+    </div>
+</div>
+{% endblock %}

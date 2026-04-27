@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ survey.title }} - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="mb-4">
+            <h1 class="h3 mb-2">{{ survey.title }}</h1>
+            <p class="text-muted">{{ survey.description }}</p>
+        </div>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <label class="form-label" for="{{ form.respondent_name.id_for_label }}">{{ form.respondent_name.label }}</label>
+                    {{ form.respondent_name }}
+                </div>
+            </div>
+            {% for field in form %}
+                {% if field.name != "respondent_name" %}
+                    <div class="card mb-3 question-card">
+                        <div class="card-body">
+                            <label class="form-label fw-semibold">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                            <div class="answer-widget">{{ field }}</div>
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <button class="btn btn-primary btn-lg" type="submit">Отправить ответы</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

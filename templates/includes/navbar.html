@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">Oprosnik</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'surveys:public_surveys' %}">Публичные опросы</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'surveys:my_surveys' %}">Мои опросы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'surveys:survey_create' %}">Создать опрос</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">Личный кабинет</a></li>
+                    <li class="nav-item">
+                        <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-light btn-sm" type="submit">Выйти</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Войти</a></li>
+                    <li class="nav-item"><a class="btn btn-light btn-sm" href="{% url 'accounts:register' %}">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

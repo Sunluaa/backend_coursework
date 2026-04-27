@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Мои опросы - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Мои опросы</h1>
+    <a class="btn btn-primary" href="{% url 'surveys:survey_create' %}">Создать опрос</a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Статус</th>
+                    <th>Настройки</th>
+                    <th>Создан</th>
+                    <th>Вопросы</th>
+                    <th>Ответы</th>
+                    <th class="text-end">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for survey in surveys %}
+                    <tr>
+                        <td class="fw-semibold">{{ survey.title }}</td>
+                        <td><span class="badge status-{{ survey.status }}">{{ survey.get_status_display }}</span></td>
+                        <td class="small text-muted">
+                            {% if survey.is_public %}публичный{% else %}непубличный{% endif %},
+                            {% if survey.allow_anonymous %}анонимно{% else %}только вход{% endif %},
+                            {% if survey.allow_multiple_submissions %}повторно{% else %}один раз{% endif %}
+                        </td>
+                        <td>{{ survey.created_at|date:"d.m.Y" }}</td>
+                        <td>{{ survey.questions_count }}</td>
+                        <td>{{ survey.responses_count }}</td>
+                        <td>
+                            <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                {% if survey.status == "draft" %}
+                                    <a class="btn btn-sm btn-outline-primary" href="{% url 'surveys:survey_edit' survey.id %}">Редактировать</a>
+                                    <form method="post" action="{% url 'surveys:survey_publish' survey.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-success" type="submit">Опубликовать</button>
+                                    </form>
+                                {% endif %}
+                                {% if survey.status == "published" %}
+                                    <form method="post" action="{% url 'surveys:survey_close' survey.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-sm btn-warning" type="submit">Закрыть</button>
+                                    </form>
+                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'surveys:take_survey' survey.uuid %}">Ссылка</a>
+                                {% endif %}
+                                <a class="btn btn-sm btn-outline-dark" href="{% url 'surveys:survey_results' survey.id %}">Результаты</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{% url 'surveys:survey_delete' survey.id %}">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">Опросы еще не созданы.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

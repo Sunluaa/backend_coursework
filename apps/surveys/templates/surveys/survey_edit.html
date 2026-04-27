@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование опроса - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ survey.title }}</h1>
+        <span class="badge status-{{ survey.status }}">{{ survey.get_status_display }}</span>
+    </div>
+    <form method="post" action="{% url 'surveys:survey_publish' survey.id %}">
+        {% csrf_token %}
+        <button class="btn btn-success" type="submit">Опубликовать</button>
+    </form>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3">Настройки опроса</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% include "surveys/partials/survey_fields.html" %}
+                    <button class="btn btn-primary" type="submit">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Вопросы</h2>
+                <a class="btn btn-sm btn-primary" href="{% url 'surveys:question_create' survey.id %}">Добавить вопрос</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for question in survey.questions.all %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">{{ question.order }}. {{ question.text }}</div>
+                                <div class="small text-muted">
+                                    {{ question.get_question_type_display }}
+                                    {% if question.is_required %}• обязательный{% else %}• необязательный{% endif %}
+                                    {% if question.needs_choices %}• вариантов: {{ question.choices.count }}{% endif %}
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap justify-content-end">
+                                {% if question.needs_choices %}
+                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'surveys:choices_manage' question.id %}">Варианты</a>
+                                {% endif %}
+                                <a class="btn btn-sm btn-outline-primary" href="{% url 'surveys:question_edit' question.id %}">Редактировать</a>
+                                <a class="btn btn-sm btn-outline-danger" href="{% url 'surveys:question_delete' question.id %}">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item text-muted">Добавьте хотя бы один вопрос перед публикацией.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

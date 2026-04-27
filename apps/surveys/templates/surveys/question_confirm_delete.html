@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Удаление вопроса - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-danger">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-3">Удалить вопрос?</h1>
+                <p class="text-muted">{{ question.text }}</p>
+                <form method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">Удалить</button>
+                    <a class="btn btn-outline-secondary" href="{% url 'surveys:survey_edit' survey.id %}">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

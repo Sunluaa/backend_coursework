@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Спасибо - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card text-center">
+            <div class="card-body p-5">
+                <h1 class="h3 mb-3">Спасибо за прохождение опроса!</h1>
+                <p class="text-muted mb-4">Ваши ответы сохранены.</p>
+                <a class="btn btn-primary" href="{% url 'surveys:public_surveys' %}">К публичным опросам</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

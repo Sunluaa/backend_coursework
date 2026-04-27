@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Результаты: {{ survey.title }}</h1>
+        <div class="text-muted">
+            Статус: <span class="badge status-{{ survey.status }}">{{ survey.get_status_display }}</span>
+            · прохождений: {{ results.response_count }}
+        </div>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'surveys:my_surveys' %}">Мои опросы</a>
+</div>
+
+{% for question in results.questions %}
+    <div class="card mb-3">
+        <div class="card-header bg-white">
+            <h2 class="h5 mb-0">{{ forloop.counter }}. {{ question.text }}</h2>
+            <span class="text-muted small">{{ question.question_type_display }}</span>
+        </div>
+        <div class="card-body">
+            {% if question.question_type == "single_choice" or question.question_type == "multiple_choice" %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Вариант</th><th>Количество</th><th>Процент</th></tr></thead>
+                        <tbody>
+                            {% for choice in question.choices %}
+                                <tr>
+                                    <td>{{ choice.text }}</td>
+                                    <td>{{ choice.count }}</td>
+                                    <td class="w-50">
+                                        <div class="progress" role="progressbar">
+                                            <div class="progress-bar" style="width: {{ choice.percentage }}%">{{ choice.percentage }}%</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif question.question_type == "text" %}
+                {% if question.text_answers %}
+                    <ul class="list-group">
+                        {% for answer in question.text_answers %}
+                            <li class="list-group-item">{{ answer }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted mb-0">Текстовых ответов пока нет.</p>
+                {% endif %}
+            {% elif question.question_type == "rating" %}
+                <p class="mb-3">Средняя оценка: <strong>{{ question.average|default:"нет данных" }}</strong></p>
+                <table class="table table-sm align-middle">
+                    <thead><tr><th>Оценка</th><th>Количество</th></tr></thead>
+                    <tbody>
+                        {% for rating, count in question.distribution.items %}
+                            <tr><td>{{ rating }}</td><td>{{ count }}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% empty %}
+    <div class="empty-state">В опросе нет вопросов.</div>
+{% endfor %}
+{% endblock %}

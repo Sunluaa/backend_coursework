@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Публичные опросы - Oprosnik{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Публичные опросы</h1>
+        <p class="text-muted mb-0">Опубликованные опросы, доступные для прохождения</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    {% for survey in surveys %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100 survey-card">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h5">{{ survey.title }}</h2>
+                    <p class="text-muted small flex-grow-1">{{ survey.description|truncatechars:160 }}</p>
+                    <div class="small text-muted mb-3">
+                        Вопросов: {{ survey.questions_count }} · опубликован {{ survey.published_at|date:"d.m.Y" }}
+                    </div>
+                    <a class="btn btn-primary" href="{% url 'surveys:take_survey' survey.uuid %}">Пройти опрос</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12"><div class="empty-state">Публичные опросы пока отсутствуют.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

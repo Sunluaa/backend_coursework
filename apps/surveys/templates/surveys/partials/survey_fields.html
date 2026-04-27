@@ -1,0 +1,30 @@
+<div class="mb-3">
+    <label class="form-label" for="{{ form.title.id_for_label }}">Название</label>
+    {{ form.title }}
+    {% for error in form.title.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="mb-3">
+    <label class="form-label" for="{{ form.description.id_for_label }}">Описание</label>
+    {{ form.description }}
+    {% for error in form.description.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="form-check">
+            {{ form.is_public }}
+            <label class="form-check-label" for="{{ form.is_public.id_for_label }}">Публичный</label>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-check">
+            {{ form.allow_anonymous }}
+            <label class="form-check-label" for="{{ form.allow_anonymous.id_for_label }}">Анонимные ответы</label>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-check">
+            {{ form.allow_multiple_submissions }}
+            <label class="form-check-label" for="{{ form.allow_multiple_submissions.id_for_label }}">Повторные ответы</label>
+        </div>
+    </div>
+</div>
