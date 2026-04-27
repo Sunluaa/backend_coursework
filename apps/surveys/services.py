@@ -125,16 +125,17 @@ def validate_answer_payload(question: Question, answer_data: dict[str, Any]) -> 
 
     if question.question_type == Question.Type.RATING:
         raw_rating = answer_data.get("rating_value")
+        rating_scale = question.rating_scale or Question.RatingScale.FIVE
         if raw_rating in (None, ""):
             if question.is_required:
-                raise BusinessLogicError(f"{question_label}: укажите оценку от 1 до 5.")
+                raise BusinessLogicError(f"{question_label}: укажите оценку от 1 до {rating_scale}.")
             return {"selected_choices": [], "text_answer": "", "rating_value": None}
         try:
             rating_value = int(raw_rating)
         except (TypeError, ValueError) as exc:
-            raise BusinessLogicError(f"{question_label}: оценка должна быть числом от 1 до 5.") from exc
-        if rating_value < 1 or rating_value > 5:
-            raise BusinessLogicError(f"{question_label}: оценка должна быть от 1 до 5.")
+            raise BusinessLogicError(f"{question_label}: оценка должна быть числом от 1 до {rating_scale}.") from exc
+        if rating_value < 1 or rating_value > rating_scale:
+            raise BusinessLogicError(f"{question_label}: оценка должна быть от 1 до {rating_scale}.")
         return {"selected_choices": [], "text_answer": "", "rating_value": rating_value}
 
     raise BusinessLogicError("Неизвестный тип вопроса.")
@@ -225,15 +226,17 @@ def calculate_survey_results(survey: Survey) -> dict[str, Any]:
             )
 
         elif question.question_type == Question.Type.RATING:
+            rating_scale = question.rating_scale or Question.RatingScale.FIVE
             ratings = list(
                 Answer.objects.filter(question=question, rating_value__isnull=False).values_list(
                     "rating_value", flat=True
                 )
             )
-            distribution = {value: ratings.count(value) for value in range(1, 6)}
+            distribution = {value: ratings.count(value) for value in range(1, rating_scale + 1)}
             average = round(sum(ratings) / len(ratings), 2) if ratings else None
             item["average"] = average
             item["distribution"] = distribution
+            item["rating_scale"] = rating_scale
 
         questions_data.append(item)
 

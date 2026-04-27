@@ -75,6 +75,15 @@ class SurveyBusinessTests(TestCase):
         self.assertIsNone(saved_response.respondent)
         self.assertEqual(saved_response.respondent_name, "Гость")
 
+    def test_guest_can_open_unlisted_survey_by_direct_link(self):
+        survey, _, _, _ = self.create_valid_survey(is_public=False, allow_anonymous=True)
+        publish_survey(survey, self.author)
+
+        response = self.client.get(reverse("surveys:take_survey", kwargs={"survey_uuid": survey.uuid}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, survey.title)
+
     def test_guest_cannot_submit_when_anonymous_disabled(self):
         survey, _, _, _ = self.create_valid_survey(allow_anonymous=False)
         publish_survey(survey, self.author)
@@ -137,6 +146,25 @@ class SurveyBusinessTests(TestCase):
         self.assertEqual(results["response_count"], 2)
         self.assertEqual(choices["Первый"]["count"], 1)
         self.assertEqual(choices["Первый"]["percentage"], 50)
+
+    def test_ten_point_rating_statistics(self):
+        survey = Survey.objects.create(title="Рейтинг", description="", author=self.author)
+        question = Question.objects.create(
+            survey=survey,
+            text="Оцените сервис",
+            question_type=Question.Type.RATING,
+            rating_scale=Question.RatingScale.TEN,
+            order=1,
+        )
+        publish_survey(survey, self.author)
+
+        create_survey_response(survey, [{"question_id": question.id, "rating_value": 10}], respondent_name="Гость")
+
+        results = calculate_survey_results(survey)
+        question_results = results["questions"][0]
+        self.assertEqual(question_results["rating_scale"], 10)
+        self.assertEqual(question_results["distribution"][10], 1)
+        self.assertEqual(question_results["average"], 10)
 
     def test_published_survey_cannot_be_edited_via_api(self):
         survey, _, _, _ = self.create_valid_survey()

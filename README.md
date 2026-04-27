@@ -1,6 +1,6 @@
 ﻿# Oprosnik
 
-Oprosnik - учебный веб-сервис для создания, публикации, прохождения и анализа опросов. Проект реализован на Django MVT: HTML-интерфейс работает на Django Templates, REST API - на Django REST Framework, документация API - через drf-spectacular.
+Oprosnik - веб-сервис для создания, публикации, прохождения и анализа опросов. Проект реализован на Django MVT: HTML-интерфейс работает на Django Templates, REST API - на Django REST Framework, документация API - через drf-spectacular.
 
 ## Стек технологий
 
@@ -129,7 +129,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver
+python -m pip install waitress
 ```
 
 ## Миграции

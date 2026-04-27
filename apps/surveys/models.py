@@ -52,11 +52,20 @@ class Question(models.Model):
         SINGLE_CHOICE = "single_choice", "Один вариант"
         MULTIPLE_CHOICE = "multiple_choice", "Несколько вариантов"
         TEXT = "text", "Текстовый ответ"
-        RATING = "rating", "Оценка 1-5"
+        RATING = "rating", "Оценка"
+
+    class RatingScale(models.IntegerChoices):
+        FIVE = 5, "5 пунктов"
+        TEN = 10, "10 пунктов"
 
     survey = models.ForeignKey(Survey, related_name="questions", on_delete=models.CASCADE, verbose_name="Опрос")
     text = models.TextField("Текст вопроса")
     question_type = models.CharField("Тип вопроса", max_length=30, choices=Type.choices)
+    rating_scale = models.PositiveSmallIntegerField(
+        "Шкала рейтинга",
+        choices=RatingScale.choices,
+        default=RatingScale.FIVE,
+    )
     is_required = models.BooleanField("Обязательный", default=True)
     order = models.PositiveIntegerField("Порядок", default=0)
     created_at = models.DateTimeField("Создан", auto_now_add=True)

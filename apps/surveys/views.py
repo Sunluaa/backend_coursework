@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ChoiceForm, QuestionForm, SurveyForm, SurveyTakeForm
 from .models import Choice, Question, Survey
-from .selectors import get_public_survey_by_uuid, get_public_surveys, get_survey_results_data, get_user_surveys
+from .selectors import get_public_surveys, get_published_survey_by_uuid, get_survey_results_data, get_user_surveys
 from .services import (
     BusinessLogicError,
     close_survey,
@@ -231,7 +231,7 @@ def public_surveys(request):
 
 def take_survey(request, survey_uuid):
     try:
-        survey = get_public_survey_by_uuid(survey_uuid)
+        survey = get_published_survey_by_uuid(survey_uuid)
     except Survey.DoesNotExist as exc:
         raise Http404("Опрос не найден.") from exc
 

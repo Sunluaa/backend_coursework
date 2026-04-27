@@ -3,7 +3,7 @@
 {% block title %}Варианты ответа - Oprosnik{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-heading mb-4">
     <div>
         <h1 class="h3 mb-1">Варианты ответа</h1>
         <p class="text-muted mb-0">{{ question.text }}</p>
@@ -32,10 +32,10 @@
     </div>
     <div class="col-lg-7">
         <div class="card">
-            <div class="card-header bg-white"><h2 class="h5 mb-0">Список вариантов</h2></div>
+            <div class="card-header"><h2 class="h5 mb-0">Список вариантов</h2></div>
             <div class="list-group list-group-flush">
                 {% for choice in question.choices.all %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <span>{{ choice.order }}. {{ choice.text }}</span>
                         <form method="post">
                             {% csrf_token %}

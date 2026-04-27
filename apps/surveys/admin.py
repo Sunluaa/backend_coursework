@@ -11,7 +11,7 @@ class ChoiceInline(admin.TabularInline):
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 0
-    fields = ("text", "question_type", "is_required", "order", "created_at")
+    fields = ("text", "question_type", "rating_scale", "is_required", "order", "created_at")
     readonly_fields = ("created_at",)
 
 
@@ -26,8 +26,8 @@ class SurveyAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ("text", "survey", "question_type", "is_required", "order")
-    list_filter = ("question_type", "is_required", "survey__status")
+    list_display = ("text", "survey", "question_type", "rating_scale", "is_required", "order")
+    list_filter = ("question_type", "rating_scale", "is_required", "survey__status")
     search_fields = ("text", "survey__title")
     readonly_fields = ("created_at",)
     inlines = [ChoiceInline]

@@ -3,36 +3,58 @@
 {% block title %}{{ survey.title }} - Oprosnik{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-9">
-        <div class="mb-4">
-            <h1 class="h3 mb-2">{{ survey.title }}</h1>
-            <p class="text-muted">{{ survey.description }}</p>
-        </div>
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
-            {% endif %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <label class="form-label" for="{{ form.respondent_name.id_for_label }}">{{ form.respondent_name.label }}</label>
-                    {{ form.respondent_name }}
-                </div>
-            </div>
-            {% for field in form %}
-                {% if field.name != "respondent_name" %}
-                    <div class="card mb-3 question-card">
-                        <div class="card-body">
-                            <label class="form-label fw-semibold">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
-                            <div class="answer-widget">{{ field }}</div>
-                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-                        </div>
-                    </div>
+<div class="survey-take-shell">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+            <div class="survey-take-header mb-4">
+                <h1 class="h3 mb-2">{{ survey.title }}</h1>
+                {% if survey.description %}
+                    <p class="text-muted mb-0">{{ survey.description }}</p>
                 {% endif %}
-            {% endfor %}
-            <button class="btn btn-primary btn-lg" type="submit">Отправить ответы</button>
-        </form>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <label class="form-label" for="{{ form.respondent_name.id_for_label }}">{{ form.respondent_name.label }}</label>
+                        {{ form.respondent_name }}
+                    </div>
+                </div>
+                {% for field in form %}
+                    {% if field.name != "respondent_name" %}
+                        <div class="card mb-3 question-card">
+                            <div class="card-body">
+                                <label class="form-label fw-semibold">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                                <div class="answer-widget">
+                                    {% if field.field.widget.input_type == "range" %}
+                                        <div class="rating-range">
+                                            <div class="rating-range-head">
+                                                <span>Оценка</span>
+                                                <output class="rating-range-value" data-rating-value for="{{ field.id_for_label }}">{{ field.value|default:field.field.initial }}</output>
+                                            </div>
+                                            {{ field }}
+                                            <div class="rating-range-scale">
+                                                <span>1</span>
+                                                <span>{{ field.field.max_value }}</span>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        {{ field }}
+                                    {% endif %}
+                                </div>
+                                {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="survey-submit-row">
+                    <button class="btn btn-primary btn-lg" type="submit">Отправить ответы</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

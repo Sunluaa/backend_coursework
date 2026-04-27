@@ -1,2 +1,7 @@
 apps/surveys/__pycache__
 apps/core/__pycache__/
+apps/accounts/__pycache__/
+apps/__pycache__/
+backend_venv/
+.env
+config/__pycache__

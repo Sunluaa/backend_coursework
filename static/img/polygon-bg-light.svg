@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="greenBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17a64e"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="edgeFadeLeft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#17a64e" stop-opacity=".18"/>
+      <stop offset=".68" stop-color="#17a64e" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#17a64e" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edgeFadeRight" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#17a64e" stop-opacity=".18"/>
+      <stop offset=".68" stop-color="#17a64e" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#17a64e" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(58)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#0f7e3a" stroke-opacity=".08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="none"/>
+  <rect width="470" height="900" fill="url(#edgeFadeLeft)"/>
+  <rect x="1130" width="470" height="900" fill="url(#edgeFadeRight)"/>
+
+  <g opacity=".95">
+    <polygon points="0,0 214,0 360,105 196,230 0,190" fill="#17a64e" opacity=".18"/>
+    <polygon points="214,0 474,0 360,105" fill="#0f7e3a" opacity=".12"/>
+    <polygon points="0,190 196,230 322,398 0,505" fill="#0ea5e9" opacity=".12"/>
+    <polygon points="196,230 360,105 430,330 322,398" fill="#17a64e" opacity=".12"/>
+    <polygon points="0,505 322,398 274,640 0,900" fill="#0f7e3a" opacity=".14"/>
+    <polygon points="274,640 438,900 0,900" fill="#17a64e" opacity=".11"/>
+    <polygon points="322,398 500,560 438,900 274,640" fill="#0ea5e9" opacity=".08"/>
+    <polygon points="40,42 360,105 196,230 0,190" fill="url(#hatch)" opacity=".9"/>
+    <polygon points="0,505 322,398 274,640 0,900" fill="url(#hatch)" opacity=".75"/>
+
+    <polyline points="0,0 214,0 360,105 196,230 0,190" fill="none" stroke="#74d995" stroke-opacity=".48" stroke-width="2"/>
+    <polyline points="0,505 322,398 274,640 438,900" fill="none" stroke="#74d995" stroke-opacity=".42" stroke-width="2"/>
+    <line x1="0" y1="190" x2="322" y2="398" stroke="#38bdf8" stroke-opacity=".28" stroke-width="2"/>
+    <line x1="214" y1="0" x2="196" y2="230" stroke="#38bdf8" stroke-opacity=".28" stroke-width="2"/>
+    <line x1="360" y1="105" x2="322" y2="398" stroke="#74d995" stroke-opacity=".32" stroke-width="2"/>
+    <line x1="322" y1="398" x2="500" y2="560" stroke="#38bdf8" stroke-opacity=".24" stroke-width="2"/>
+    <circle cx="214" cy="0" r="5" fill="#8ee6a9"/>
+    <circle cx="360" cy="105" r="5" fill="#8ee6a9"/>
+    <circle cx="196" cy="230" r="5" fill="#8ee6a9"/>
+    <circle cx="322" cy="398" r="5" fill="#8ee6a9"/>
+    <circle cx="274" cy="640" r="5" fill="#8ee6a9"/>
+    <circle cx="438" cy="900" r="5" fill="#8ee6a9"/>
+  </g>
+
+  <g opacity=".95">
+    <polygon points="1600,0 1386,0 1240,105 1404,230 1600,190" fill="#17a64e" opacity=".18"/>
+    <polygon points="1386,0 1126,0 1240,105" fill="#0f7e3a" opacity=".12"/>
+    <polygon points="1600,190 1404,230 1278,398 1600,505" fill="#0ea5e9" opacity=".12"/>
+    <polygon points="1404,230 1240,105 1170,330 1278,398" fill="#17a64e" opacity=".12"/>
+    <polygon points="1600,505 1278,398 1326,640 1600,900" fill="#0f7e3a" opacity=".14"/>
+    <polygon points="1326,640 1162,900 1600,900" fill="#17a64e" opacity=".11"/>
+    <polygon points="1278,398 1100,560 1162,900 1326,640" fill="#0ea5e9" opacity=".08"/>
+    <polygon points="1560,42 1240,105 1404,230 1600,190" fill="url(#hatch)" opacity=".9"/>
+    <polygon points="1600,505 1278,398 1326,640 1600,900" fill="url(#hatch)" opacity=".75"/>
+
+    <polyline points="1600,0 1386,0 1240,105 1404,230 1600,190" fill="none" stroke="#74d995" stroke-opacity=".48" stroke-width="2"/>
+    <polyline points="1600,505 1278,398 1326,640 1162,900" fill="none" stroke="#74d995" stroke-opacity=".42" stroke-width="2"/>
+    <line x1="1600" y1="190" x2="1278" y2="398" stroke="#38bdf8" stroke-opacity=".28" stroke-width="2"/>
+    <line x1="1386" y1="0" x2="1404" y2="230" stroke="#38bdf8" stroke-opacity=".28" stroke-width="2"/>
+    <line x1="1240" y1="105" x2="1278" y2="398" stroke="#74d995" stroke-opacity=".32" stroke-width="2"/>
+    <line x1="1278" y1="398" x2="1100" y2="560" stroke="#38bdf8" stroke-opacity=".24" stroke-width="2"/>
+    <circle cx="1386" cy="0" r="5" fill="#8ee6a9"/>
+    <circle cx="1240" cy="105" r="5" fill="#8ee6a9"/>
+    <circle cx="1404" cy="230" r="5" fill="#8ee6a9"/>
+    <circle cx="1278" cy="398" r="5" fill="#8ee6a9"/>
+    <circle cx="1326" cy="640" r="5" fill="#8ee6a9"/>
+    <circle cx="1162" cy="900" r="5" fill="#8ee6a9"/>
+  </g>
+</svg>

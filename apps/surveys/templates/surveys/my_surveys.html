@@ -3,7 +3,7 @@
 {% block title %}Мои опросы - Oprosnik{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-heading mb-4">
     <h1 class="h3 mb-0">Мои опросы</h1>
     <a class="btn btn-primary" href="{% url 'surveys:survey_create' %}">Создать опрос</a>
 </div>
@@ -36,7 +36,8 @@
                         <td>{{ survey.questions_count }}</td>
                         <td>{{ survey.responses_count }}</td>
                         <td>
-                            <div class="d-flex justify-content-end gap-2 flex-wrap">
+                            <div class="table-actions d-flex justify-content-end gap-2 flex-wrap">
+                                <a class="btn btn-sm btn-outline-dark" href="{% url 'surveys:survey_results' survey.id %}">Результаты</a>
                                 {% if survey.status == "draft" %}
                                     <a class="btn btn-sm btn-outline-primary" href="{% url 'surveys:survey_edit' survey.id %}">Редактировать</a>
                                     <form method="post" action="{% url 'surveys:survey_publish' survey.id %}">
@@ -51,8 +52,6 @@
                                     </form>
                                     <a class="btn btn-sm btn-outline-secondary" href="{% url 'surveys:take_survey' survey.uuid %}">Ссылка</a>
                                 {% endif %}
-                                <a class="btn btn-sm btn-outline-dark" href="{% url 'surveys:survey_results' survey.id %}">Результаты</a>
-                                <a class="btn btn-sm btn-outline-danger" href="{% url 'surveys:survey_delete' survey.id %}">Удалить</a>
                             </div>
                         </td>
                     </tr>

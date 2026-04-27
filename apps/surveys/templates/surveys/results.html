@@ -3,7 +3,7 @@
 {% block title %}Результаты - Oprosnik{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-heading mb-4">
     <div>
         <h1 class="h3 mb-1">Результаты: {{ survey.title }}</h1>
         <div class="text-muted">
@@ -16,7 +16,7 @@
 
 {% for question in results.questions %}
     <div class="card mb-3">
-        <div class="card-header bg-white">
+        <div class="card-header">
             <h2 class="h5 mb-0">{{ forloop.counter }}. {{ question.text }}</h2>
             <span class="text-muted small">{{ question.question_type_display }}</span>
         </div>
@@ -51,7 +51,7 @@
                     <p class="text-muted mb-0">Текстовых ответов пока нет.</p>
                 {% endif %}
             {% elif question.question_type == "rating" %}
-                <p class="mb-3">Средняя оценка: <strong>{{ question.average|default:"нет данных" }}</strong></p>
+                <p class="mb-3">Средняя оценка: <strong>{{ question.average|default:"нет данных" }}</strong> из {{ question.rating_scale }}</p>
                 <table class="table table-sm align-middle">
                     <thead><tr><th>Оценка</th><th>Количество</th></tr></thead>
                     <tbody>

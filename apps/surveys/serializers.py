@@ -14,7 +14,7 @@ class QuestionReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ("id", "text", "question_type", "is_required", "order", "choices")
+        fields = ("id", "text", "question_type", "rating_scale", "is_required", "order", "choices")
 
 
 class SurveySerializer(serializers.ModelSerializer):
@@ -90,7 +90,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ("id", "survey", "text", "question_type", "is_required", "order", "created_at", "choices")
+        fields = ("id", "survey", "text", "question_type", "rating_scale", "is_required", "order", "created_at", "choices")
         read_only_fields = ("id", "created_at", "choices")
 
     def validate(self, attrs):

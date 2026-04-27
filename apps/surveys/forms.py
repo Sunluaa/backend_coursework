@@ -3,6 +3,10 @@ from django import forms
 from .models import Choice, Question, Survey
 
 
+class RatingRangeInput(forms.NumberInput):
+    input_type = "range"
+
+
 class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
@@ -19,10 +23,11 @@ class SurveyForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ("text", "question_type", "is_required", "order")
+        fields = ("text", "question_type", "rating_scale", "is_required", "order")
         widgets = {
             "text": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "question_type": forms.Select(attrs={"class": "form-select"}),
+            "rating_scale": forms.Select(attrs={"class": "form-select"}),
             "is_required": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "order": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
         }
@@ -60,14 +65,14 @@ class SurveyTakeForm(forms.Form):
                     label=question.text,
                     choices=choices,
                     required=question.is_required,
-                    widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+                    widget=forms.RadioSelect(attrs={"class": "choice-list"}),
                 )
             elif question.question_type == Question.Type.MULTIPLE_CHOICE:
                 self.fields[field_name] = forms.MultipleChoiceField(
                     label=question.text,
                     choices=choices,
                     required=question.is_required,
-                    widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+                    widget=forms.CheckboxSelectMultiple(attrs={"class": "choice-list"}),
                 )
             elif question.question_type == Question.Type.TEXT:
                 self.fields[field_name] = forms.CharField(
@@ -76,14 +81,23 @@ class SurveyTakeForm(forms.Form):
                     widget=forms.Textarea(attrs={"class": "form-control", "rows": 4}),
                 )
             elif question.question_type == Question.Type.RATING:
-                rating_choices = [(value, str(value)) for value in range(1, 6)]
-                if not question.is_required:
-                    rating_choices = [("", "Не выбрано")] + rating_choices
-                self.fields[field_name] = forms.ChoiceField(
+                rating_scale = question.rating_scale or Question.RatingScale.FIVE
+                initial_rating = max(1, int(rating_scale) // 2 + int(rating_scale) % 2)
+                self.fields[field_name] = forms.IntegerField(
                     label=question.text,
-                    choices=rating_choices,
                     required=question.is_required,
-                    widget=forms.RadioSelect(attrs={"class": "form-check-input rating-options"}),
+                    min_value=1,
+                    max_value=rating_scale,
+                    initial=initial_rating,
+                    widget=RatingRangeInput(
+                        attrs={
+                            "class": "rating-range-input",
+                            "min": 1,
+                            "max": rating_scale,
+                            "step": 1,
+                            "data-rating-scale": rating_scale,
+                        }
+                    ),
                 )
 
     @staticmethod

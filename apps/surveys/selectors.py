@@ -27,8 +27,8 @@ def get_survey_for_author(survey_id, user):
     return _survey_base_queryset().get(id=survey_id, author=user)
 
 
-def get_public_survey_by_uuid(uuid):
-    return _survey_base_queryset().get(uuid=uuid, status=Survey.Status.PUBLISHED, is_public=True)
+def get_published_survey_by_uuid(uuid):
+    return _survey_base_queryset().get(uuid=uuid, status=Survey.Status.PUBLISHED)
 
 
 def get_survey_results_data(survey):
