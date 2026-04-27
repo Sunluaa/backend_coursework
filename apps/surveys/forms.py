@@ -11,25 +11,47 @@ class SurveyForm(forms.ModelForm):
     class Meta:
         model = Survey
         fields = ("title", "description", "is_public", "allow_anonymous", "allow_multiple_submissions")
+        labels = {
+            "is_public": "Публичный доступ",
+            "allow_anonymous": "Анонимные ответы",
+            "allow_multiple_submissions": "Повторные ответы",
+        }
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
-            "is_public": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "allow_anonymous": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "allow_multiple_submissions": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "is_public": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input survey-switch-input",
+                    "role": "switch",
+                    "aria-describedby": "id_is_public_help",
+                }
+            ),
+            "allow_anonymous": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input survey-switch-input",
+                    "role": "switch",
+                    "aria-describedby": "id_allow_anonymous_help",
+                }
+            ),
+            "allow_multiple_submissions": forms.CheckboxInput(
+                attrs={
+                    "class": "form-check-input survey-switch-input",
+                    "role": "switch",
+                    "aria-describedby": "id_allow_multiple_submissions_help",
+                }
+            ),
         }
 
 
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ("text", "question_type", "rating_scale", "is_required", "order")
+        fields = ("text", "question_type", "rating_scale", "is_required")
         widgets = {
-            "text": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "text": forms.TextInput(attrs={"class": "form-control"}),
             "question_type": forms.Select(attrs={"class": "form-select"}),
             "rating_scale": forms.Select(attrs={"class": "form-select"}),
             "is_required": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "order": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
         }
 
 

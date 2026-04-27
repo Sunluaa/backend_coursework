@@ -3,34 +3,87 @@
 {% block title %}{{ title }} - Oprosnik{% endblock %}
 
 {% block content %}
+<div class="page-heading mb-4">
+    <div>
+        <h1 class="h3 mb-1">{{ title }}</h1>
+        <p class="text-muted mb-0">Опрос: {{ survey.title }}</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'surveys:survey_edit' survey.id %}">К опросу</a>
+</div>
+
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-body p-4">
-                <h1 class="h3 mb-1">{{ title }}</h1>
-                <p class="text-muted mb-4">Опрос: {{ survey.title }}</p>
-                <form method="post" novalidate>
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="mb-3{% if field.name == 'is_required' %} form-check{% endif %}"{% if field.name == "rating_scale" %} data-rating-scale-field{% endif %}>
-                            {% if field.name == "is_required" %}
-                                {{ field }}
-                                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {% else %}
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-                            {% endif %}
-                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    <div class="col-xl-6 col-lg-8">
+        <form method="post" novalidate class="question-form" data-question-form>
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="card question-form-card">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-4">{{ title }}</h2>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.text.id_for_label }}">Вопрос</label>
+                        {{ form.text }}
+                        {% for error in form.text.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.question_type.id_for_label }}">Тип ответа</label>
+                        {{ form.question_type }}
+                        {% for error in form.question_type.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3" data-rating-scale-field{% if not rating_scale_visible %} hidden{% endif %}>
+                        <label class="form-label" for="{{ form.rating_scale.id_for_label }}">Шкала рейтинга</label>
+                        {{ form.rating_scale }}
+                        {% for error in form.rating_scale.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="choice-builder mb-3" data-choice-builder data-max-choices="11"{% if not choice_builder_visible %} hidden{% endif %}>
+                        <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                            <div>
+                                <label class="form-label mb-1">Варианты ответа</label>
+                                <p class="form-text mb-0">Минимум 1 вариант. Пустые строки не сохраняются.</p>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" type="button" data-choice-add>Добавить ответ</button>
                         </div>
-                    {% endfor %}
-                    <div class="d-flex gap-2">
+
+                        <div class="choice-stack" data-choice-list>
+                            {% for choice_text in choice_texts %}
+                                <div class="choice-row">
+                                    <input type="text" name="choice_texts" class="form-control choice-input" value="{{ choice_text }}" placeholder="Вариант ответа">
+                                    <button class="btn btn-outline-secondary choice-remove" type="button" data-choice-remove aria-label="Удалить вариант">×</button>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <template data-choice-template>
+                            <div class="choice-row">
+                                <input type="text" name="choice_texts" class="form-control choice-input" value="" placeholder="Вариант ответа">
+                                <button class="btn btn-outline-secondary choice-remove" type="button" data-choice-remove aria-label="Удалить вариант">×</button>
+                            </div>
+                        </template>
+
+                        <div class="choice-footnote">Можно добавить ещё 10 вариантов ответа.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.is_required }}
+                            <label class="form-check-label" for="{{ form.is_required.id_for_label }}">{{ form.is_required.label }}</label>
+                        </div>
+                        {% for error in form.is_required.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4 flex-wrap">
                         <button class="btn btn-primary" type="submit">Сохранить</button>
                         <a class="btn btn-outline-secondary" href="{% url 'surveys:survey_edit' survey.id %}">К опросу</a>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 {% endblock %}

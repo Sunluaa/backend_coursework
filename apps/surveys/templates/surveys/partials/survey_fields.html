@@ -8,23 +8,49 @@
     {{ form.description }}
     {% for error in form.description.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
 </div>
-<div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="form-check">
-            {{ form.is_public }}
-            <label class="form-check-label" for="{{ form.is_public.id_for_label }}">Публичный</label>
+<div class="survey-settings-list mb-4">
+    <div>
+        <div class="survey-setting-item">
+            <div class="survey-setting-copy">
+                <label class="survey-setting-title" for="{{ form.is_public.id_for_label }}">{{ form.is_public.label }}</label>
+                <p class="survey-setting-description" id="id_is_public_help">
+                    Если включено, опрос будет доступен всем пользователям на сайте. Если выключено, открыть его можно только по прямой ссылке.
+                </p>
+            </div>
+            <div class="form-check form-switch survey-setting-switch">
+                {{ form.is_public }}
+            </div>
         </div>
+        {% for error in form.is_public.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
     </div>
-    <div class="col-md-4">
-        <div class="form-check">
-            {{ form.allow_anonymous }}
-            <label class="form-check-label" for="{{ form.allow_anonymous.id_for_label }}">Анонимные ответы</label>
+
+    <div>
+        <div class="survey-setting-item">
+            <div class="survey-setting-copy">
+                <label class="survey-setting-title" for="{{ form.allow_anonymous.id_for_label }}">{{ form.allow_anonymous.label }}</label>
+                <p class="survey-setting-description" id="id_allow_anonymous_help">
+                    Если включено, голосовать смогут незарегистрированные пользователи. Если выключено, пройти опрос смогут только пользователи после входа.
+                </p>
+            </div>
+            <div class="form-check form-switch survey-setting-switch">
+                {{ form.allow_anonymous }}
+            </div>
         </div>
+        {% for error in form.allow_anonymous.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
     </div>
-    <div class="col-md-4">
-        <div class="form-check">
-            {{ form.allow_multiple_submissions }}
-            <label class="form-check-label" for="{{ form.allow_multiple_submissions.id_for_label }}">Повторные ответы</label>
+
+    <div>
+        <div class="survey-setting-item">
+            <div class="survey-setting-copy">
+                <label class="survey-setting-title" for="{{ form.allow_multiple_submissions.id_for_label }}">{{ form.allow_multiple_submissions.label }}</label>
+                <p class="survey-setting-description" id="id_allow_multiple_submissions_help">
+                    Если включено, зарегистрированный пользователь сможет пройти этот опрос повторно. Если выключено, повторная отправка будет заблокирована.
+                </p>
+            </div>
+            <div class="form-check form-switch survey-setting-switch">
+                {{ form.allow_multiple_submissions }}
+            </div>
         </div>
+        {% for error in form.allow_multiple_submissions.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
     </div>
 </div>

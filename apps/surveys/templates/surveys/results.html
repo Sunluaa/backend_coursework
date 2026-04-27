@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load l10n %}
 
 {% block title %}Результаты - Oprosnik{% endblock %}
 
@@ -22,17 +23,30 @@
         </div>
         <div class="card-body">
             {% if question.question_type == "single_choice" or question.question_type == "multiple_choice" %}
+                <div class="result-summary mb-3">
+                    <span>{{ question.choice_total_label }}: <strong>{{ question.choice_total }}</strong></span>
+                    <span>Прохождений опроса: <strong>{{ results.response_count }}</strong></span>
+                </div>
                 <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead><tr><th>Вариант</th><th>Количество</th><th>Процент</th></tr></thead>
+                    <table class="table result-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Вариант</th>
+                                <th class="result-count-col">Количество</th>
+                                <th>{{ question.percentage_title }}</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             {% for choice in question.choices %}
                                 <tr>
                                     <td>{{ choice.text }}</td>
                                     <td>{{ choice.count }}</td>
-                                    <td class="w-50">
-                                        <div class="progress" role="progressbar">
-                                            <div class="progress-bar" style="width: {{ choice.percentage }}%">{{ choice.percentage }}%</div>
+                                    <td class="result-progress-cell">
+                                        <div class="result-progress-row">
+                                            <div class="result-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ choice.percentage|unlocalize }}">
+                                                <div class="result-progress-bar" style="width: {{ choice.percentage|unlocalize }}%"></div>
+                                            </div>
+                                            <span class="result-percent-value">{{ choice.percentage|floatformat:1 }}%</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -51,15 +65,37 @@
                     <p class="text-muted mb-0">Текстовых ответов пока нет.</p>
                 {% endif %}
             {% elif question.question_type == "rating" %}
-                <p class="mb-3">Средняя оценка: <strong>{{ question.average|default:"нет данных" }}</strong> из {{ question.rating_scale }}</p>
-                <table class="table table-sm align-middle">
-                    <thead><tr><th>Оценка</th><th>Количество</th></tr></thead>
-                    <tbody>
-                        {% for rating, count in question.distribution.items %}
-                            <tr><td>{{ rating }}</td><td>{{ count }}</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="result-summary mb-3">
+                    <span>Оценок: <strong>{{ question.rating_count }}</strong></span>
+                    <span>Средняя: <strong>{{ question.average|default:"нет данных" }}</strong> из {{ question.rating_scale }}</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table result-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Оценка</th>
+                                <th class="result-count-col">Количество</th>
+                                <th>Доля оценок</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rating in question.rating_rows %}
+                                <tr>
+                                    <td>{{ rating.value }}</td>
+                                    <td>{{ rating.count }}</td>
+                                    <td class="result-progress-cell">
+                                        <div class="result-progress-row">
+                                            <div class="result-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ rating.percentage|unlocalize }}">
+                                                <div class="result-progress-bar" style="width: {{ rating.percentage|unlocalize }}%"></div>
+                                            </div>
+                                            <span class="result-percent-value">{{ rating.percentage|floatformat:1 }}%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% endif %}
         </div>
     </div>

@@ -46,6 +46,13 @@ class SurveyBusinessTests(TestCase):
         survey = Survey.objects.get(title="Новый опрос")
         self.assertEqual(survey.author, self.author)
 
+    def test_new_survey_settings_are_disabled_by_default(self):
+        survey = Survey.objects.create(title="Закрытый опрос", description="", author=self.author)
+
+        self.assertFalse(survey.is_public)
+        self.assertFalse(survey.allow_anonymous)
+        self.assertFalse(survey.allow_multiple_submissions)
+
     def test_empty_survey_cannot_be_published(self):
         survey = Survey.objects.create(title="Пустой", description="", author=self.author)
 
@@ -84,6 +91,68 @@ class SurveyBusinessTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, survey.title)
 
+    def test_question_create_saves_inline_choices_and_ignores_blank_rows(self):
+        self.client.login(username="author", password="pass12345")
+        survey = Survey.objects.create(title="Новый", description="", author=self.author)
+
+        response = self.client.post(
+            reverse("surveys:question_create", kwargs={"survey_id": survey.id}),
+            {
+                "text": "Выберите вариант",
+                "question_type": Question.Type.SINGLE_CHOICE,
+                "rating_scale": Question.RatingScale.FIVE,
+                "is_required": "on",
+                "choice_texts": ["Первый", "", "Второй"],
+            },
+        )
+
+        self.assertRedirects(response, reverse("surveys:survey_edit", kwargs={"survey_id": survey.id}))
+        question = Question.objects.get(survey=survey)
+        self.assertEqual(question.choices.count(), 2)
+        self.assertEqual(list(question.choices.values_list("text", flat=True)), ["Первый", "Второй"])
+        self.assertEqual(question.order, 1)
+
+    def test_new_question_is_inserted_first(self):
+        self.client.login(username="author", password="pass12345")
+        survey, existing_question, _, _ = self.create_valid_survey()
+
+        response = self.client.post(
+            reverse("surveys:question_create", kwargs={"survey_id": survey.id}),
+            {
+                "text": "Новый первый вопрос",
+                "question_type": Question.Type.TEXT,
+                "rating_scale": Question.RatingScale.FIVE,
+                "is_required": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("surveys:survey_edit", kwargs={"survey_id": survey.id}))
+        existing_question.refresh_from_db()
+        new_question = Question.objects.get(survey=survey, text="Новый первый вопрос")
+        self.assertEqual(new_question.order, 1)
+        self.assertEqual(existing_question.order, 2)
+
+    def test_author_can_reorder_questions(self):
+        self.client.login(username="author", password="pass12345")
+        survey, first_question, _, _ = self.create_valid_survey()
+        second_question = Question.objects.create(
+            survey=survey,
+            text="Второй вопрос",
+            question_type=Question.Type.TEXT,
+            order=2,
+        )
+
+        response = self.client.post(
+            reverse("surveys:questions_reorder", kwargs={"survey_id": survey.id}),
+            {"question_ids": [second_question.id, first_question.id]},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        first_question.refresh_from_db()
+        second_question.refresh_from_db()
+        self.assertEqual(second_question.order, 1)
+        self.assertEqual(first_question.order, 2)
+
     def test_guest_cannot_submit_when_anonymous_disabled(self):
         survey, _, _, _ = self.create_valid_survey(allow_anonymous=False)
         publish_survey(survey, self.author)
@@ -110,7 +179,7 @@ class SurveyBusinessTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_api_submit_survey_response(self):
-        survey, _, first, _ = self.create_valid_survey()
+        survey, _, first, _ = self.create_valid_survey(is_public=True, allow_anonymous=True)
         publish_survey(survey, self.author)
         api_client = APIClient()
 
@@ -127,7 +196,7 @@ class SurveyBusinessTests(TestCase):
         self.assertEqual(SurveyResponse.objects.filter(survey=survey).count(), 1)
 
     def test_single_choice_statistics(self):
-        survey, question, first, second = self.create_valid_survey()
+        survey, question, first, second = self.create_valid_survey(allow_anonymous=True)
         publish_survey(survey, self.author)
         create_survey_response(
             survey,
@@ -147,8 +216,42 @@ class SurveyBusinessTests(TestCase):
         self.assertEqual(choices["Первый"]["count"], 1)
         self.assertEqual(choices["Первый"]["percentage"], 50)
 
+    def test_multiple_choice_statistics_uses_selection_share(self):
+        survey = Survey.objects.create(
+            title="Множественный выбор",
+            description="",
+            author=self.author,
+            allow_anonymous=True,
+        )
+        question = Question.objects.create(
+            survey=survey,
+            text="Выберите варианты",
+            question_type=Question.Type.MULTIPLE_CHOICE,
+            order=1,
+        )
+        first = Choice.objects.create(question=question, text="Первый", order=1)
+        second = Choice.objects.create(question=question, text="Второй", order=2)
+        third = Choice.objects.create(question=question, text="Третий", order=3)
+        publish_survey(survey, self.author)
+
+        create_survey_response(
+            survey,
+            [{"question_id": question.id, "selected_choices": [first.id, second.id]}],
+            respondent_name="Гость",
+        )
+
+        results = calculate_survey_results(survey)
+        question_results = results["questions"][0]
+        choices = {choice["text"]: choice for choice in question_results["choices"]}
+
+        self.assertEqual(question_results["choice_total"], 2)
+        self.assertEqual(question_results["percentage_title"], "Доля выборов")
+        self.assertEqual(choices["Первый"]["percentage"], 50)
+        self.assertEqual(choices["Второй"]["percentage"], 50)
+        self.assertEqual(choices["Третий"]["percentage"], 0)
+
     def test_ten_point_rating_statistics(self):
-        survey = Survey.objects.create(title="Рейтинг", description="", author=self.author)
+        survey = Survey.objects.create(title="Рейтинг", description="", author=self.author, allow_anonymous=True)
         question = Question.objects.create(
             survey=survey,
             text="Оцените сервис",

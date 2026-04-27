@@ -82,6 +82,10 @@ def validate_survey_can_be_answered(survey: Survey, user: User | AnonymousUser |
         raise BusinessLogicError("Вы уже проходили этот опрос.")
 
 
+def _percentage(count: int, total: int) -> float:
+    return round((count / total) * 100, 2) if total else 0
+
+
 def _to_int_list(value: Any) -> list[int]:
     if value in (None, ""):
         return []
@@ -210,12 +214,27 @@ def calculate_survey_results(survey: Survey) -> dict[str, Any]:
         }
 
         if question.question_type in {Question.Type.SINGLE_CHOICE, Question.Type.MULTIPLE_CHOICE}:
-            choices_data = []
+            raw_choices = []
             for choice in question.choices.all():
                 count = Answer.objects.filter(question=question, selected_choices=choice).count()
-                percentage = round((count / response_count) * 100, 2) if response_count else 0
-                choices_data.append({"id": choice.id, "text": choice.text, "count": count, "percentage": percentage})
-            item["choices"] = choices_data
+                raw_choices.append({"id": choice.id, "text": choice.text, "count": count})
+
+            choice_total = sum(choice["count"] for choice in raw_choices)
+            item["choice_total"] = choice_total
+            if question.question_type == Question.Type.MULTIPLE_CHOICE:
+                item["choice_total_label"] = "Всего выборов"
+                item["percentage_title"] = "Доля выборов"
+            else:
+                item["choice_total_label"] = "Ответов на вопрос"
+                item["percentage_title"] = "Доля ответов"
+
+            item["choices"] = [
+                {
+                    **choice,
+                    "percentage": _percentage(choice["count"], choice_total),
+                }
+                for choice in raw_choices
+            ]
 
         elif question.question_type == Question.Type.TEXT:
             item["text_answers"] = list(
@@ -236,6 +255,11 @@ def calculate_survey_results(survey: Survey) -> dict[str, Any]:
             average = round(sum(ratings) / len(ratings), 2) if ratings else None
             item["average"] = average
             item["distribution"] = distribution
+            item["rating_rows"] = [
+                {"value": value, "count": count, "percentage": _percentage(count, len(ratings))}
+                for value, count in distribution.items()
+            ]
+            item["rating_count"] = len(ratings)
             item["rating_scale"] = rating_scale
 
         questions_data.append(item)

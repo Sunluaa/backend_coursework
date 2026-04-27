@@ -36,12 +36,13 @@
                 <h2 class="h5 mb-0">Вопросы</h2>
                 <a class="btn btn-sm btn-primary" href="{% url 'surveys:question_create' survey.id %}">Добавить вопрос</a>
             </div>
-            <div class="list-group list-group-flush">
+            <div class="list-group list-group-flush question-sort-list" data-question-list data-reorder-url="{% url 'surveys:questions_reorder' survey.id %}">
                 {% for question in survey.questions.all %}
-                    <div class="list-group-item">
+                    <div class="list-group-item question-sort-item" data-question-item data-question-id="{{ question.id }}">
                         <div class="question-row d-flex justify-content-between gap-3">
-                            <div>
-                                <div class="fw-semibold">{{ question.order }}. {{ question.text }}</div>
+                            <button class="question-drag-handle" type="button" draggable="true" data-drag-handle aria-label="Переместить вопрос" title="Переместить вопрос">⋮⋮</button>
+                            <div class="question-summary">
+                                <div class="fw-semibold">{{ question.text }}</div>
                                 <div class="small text-muted">
                                     {{ question.get_question_type_display }}
                                     {% if question.is_required %}• обязательный{% else %}• необязательный{% endif %}
@@ -50,9 +51,6 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-2 flex-wrap justify-content-end">
-                                {% if question.needs_choices %}
-                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'surveys:choices_manage' question.id %}">Варианты</a>
-                                {% endif %}
                                 <a class="btn btn-sm btn-outline-primary" href="{% url 'surveys:question_edit' question.id %}">Редактировать</a>
                                 <a class="btn btn-sm btn-outline-danger" href="{% url 'surveys:question_delete' question.id %}">Удалить</a>
                             </div>

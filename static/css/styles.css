@@ -689,6 +689,74 @@ body {
     flex-wrap: wrap;
 }
 
+.survey-settings-list {
+    display: grid;
+    gap: .75rem;
+}
+
+.survey-setting-item {
+    align-items: center;
+    background: linear-gradient(180deg, var(--op-surface) 0%, var(--op-surface-soft) 100%);
+    border: 1px solid var(--op-border);
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: .95rem 1rem;
+}
+
+.survey-setting-copy {
+    min-width: 0;
+}
+
+.survey-setting-title {
+    color: var(--op-text);
+    cursor: pointer;
+    display: block;
+    font-weight: 700;
+    margin-bottom: .25rem;
+}
+
+.survey-setting-description {
+    color: var(--op-muted);
+    font-size: .92rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.survey-setting-switch {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    margin: 0;
+    min-width: 3.4rem;
+    padding-left: 0;
+}
+
+.survey-setting-switch .form-check-input {
+    cursor: pointer;
+    float: none;
+    height: 1.55rem;
+    margin: 0;
+    width: 3.15rem;
+}
+
+.survey-setting-switch .form-check-input:not(:checked) {
+    background-color: var(--op-border);
+    border-color: var(--op-border);
+}
+
+.survey-setting-switch .form-check-input:checked {
+    background-color: var(--op-primary);
+    border-color: var(--op-primary);
+}
+
+.survey-setting-switch .form-check-input:focus {
+    border-color: var(--op-primary);
+    box-shadow: 0 0 0 .2rem rgba(var(--op-primary-rgb), .18);
+}
+
 .list-group {
     --bs-list-group-bg: var(--op-surface);
     --bs-list-group-color: var(--op-text);
@@ -700,12 +768,141 @@ body {
     flex-wrap: wrap;
 }
 
+.question-sort-list {
+    position: relative;
+}
+
+.question-sort-item {
+    transition: background-color .15s ease, border-color .15s ease, opacity .15s ease;
+}
+
+.question-sort-item.is-dragging {
+    background: var(--op-primary-soft);
+    border-color: rgba(var(--op-primary-rgb), .4);
+    opacity: .72;
+}
+
+.question-drag-handle {
+    align-items: center;
+    align-self: center;
+    background: var(--op-surface-soft);
+    border: 1px solid var(--op-border);
+    border-radius: 8px;
+    color: var(--op-muted);
+    cursor: grab;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-weight: 800;
+    height: 2.25rem;
+    justify-content: center;
+    letter-spacing: 0;
+    line-height: 1;
+    padding: 0;
+    width: 2.25rem;
+}
+
+.question-drag-handle:active {
+    cursor: grabbing;
+}
+
+.question-drag-handle:hover,
+.question-drag-handle:focus-visible {
+    background: var(--op-primary-soft);
+    border-color: rgba(var(--op-primary-rgb), .45);
+    color: var(--op-primary);
+}
+
+.question-summary {
+    flex: 1 1 18rem;
+    min-width: 0;
+}
+
 .progress {
     background-color: var(--op-primary-soft);
 }
 
 .progress-bar {
     background-color: var(--op-primary);
+}
+
+.result-summary {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: .92rem;
+    gap: .55rem;
+}
+
+.result-summary span {
+    align-items: center;
+    background: rgba(var(--op-primary-rgb), .08);
+    border: 1px solid rgba(var(--op-primary-rgb), .16);
+    border-radius: 999px;
+    color: var(--op-muted);
+    display: inline-flex;
+    gap: .35rem;
+    min-height: 2rem;
+    padding: .35rem .7rem;
+}
+
+.result-summary strong {
+    color: var(--op-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.result-table {
+    min-width: 38rem;
+    table-layout: fixed;
+}
+
+.result-table th:first-child,
+.result-table td:first-child {
+    width: 38%;
+}
+
+.result-count-col {
+    width: 8rem;
+}
+
+.result-table th:nth-child(2),
+.result-table td:nth-child(2) {
+    text-align: center;
+}
+
+.result-progress-cell {
+    width: auto;
+}
+
+.result-progress-row {
+    align-items: center;
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: minmax(10rem, 1fr) 4.75rem;
+}
+
+.result-progress {
+    background: rgba(var(--op-primary-rgb), .12);
+    border: 1px solid rgba(var(--op-primary-rgb), .2);
+    border-radius: 999px;
+    height: .95rem;
+    overflow: hidden;
+}
+
+.result-progress-bar {
+    background: linear-gradient(90deg, var(--op-primary), var(--op-primary-dark));
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+    height: 100%;
+    transition: width .2s ease;
+}
+
+.result-percent-value {
+    color: var(--op-text);
+    font-size: .86rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .form-control,
@@ -766,6 +963,67 @@ form select:focus {
 
 .question-card .card-body {
     padding: 1.1rem;
+}
+
+.question-form-card {
+    border-color: var(--op-border);
+    box-shadow: var(--op-shadow);
+}
+
+.question-form-card .card-body {
+    background: linear-gradient(180deg, var(--op-surface) 0%, var(--op-surface-soft) 100%);
+    border-radius: 8px;
+}
+
+.question-form .form-control,
+.question-form .form-select {
+    background-color: var(--op-surface-soft);
+}
+
+.choice-builder {
+    background: linear-gradient(180deg, var(--op-surface-soft) 0%, var(--op-surface) 100%);
+    border: 1px solid var(--op-border);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.choice-stack {
+    display: grid;
+    gap: .6rem;
+}
+
+.choice-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.choice-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.choice-remove {
+    flex: 0 0 auto;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    line-height: 1;
+}
+
+.choice-footnote {
+    color: var(--op-muted);
+    font-size: .85rem;
+    margin-top: .65rem;
+}
+
+.question-form .form-check {
+    padding-left: 1.5rem;
+}
+
+.question-form .form-check-input {
+    float: left;
+    margin-left: -1.5rem;
 }
 
 .answer-widget ul,
@@ -960,6 +1218,14 @@ form select:focus {
 }
 
 @media (max-width: 767.98px) {
+    .survey-setting-item {
+        align-items: flex-start;
+    }
+
+    .survey-setting-switch {
+        padding-top: .15rem;
+    }
+
     .footer-inner {
         align-items: flex-start;
         flex-direction: column;
